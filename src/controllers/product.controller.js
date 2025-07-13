@@ -10,6 +10,17 @@ export const getProducts = async (req, res) => {
   }
 };
 
+export const getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate('supplier');
+    if (!product) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+    return res.json(product);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al obtener producto', error });
+  }
+};
 
 export const createProduct = async (req, res) => {
   try {
