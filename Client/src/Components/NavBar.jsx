@@ -14,6 +14,7 @@ import Menu from "@mui/material/Menu";
 import { useNavigate } from "react-router-dom";
 import Snackbar from "@mui/material/Snackbar";
 import Button from "@mui/material/Button";
+import Popover from "@mui/material/Popover";
 
 export default function NavBar() {
   const [auth, setAuth] = React.useState(true);
@@ -62,7 +63,9 @@ export default function NavBar() {
         />
       </FormGroup>
 
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        sx={{borderRadius: "12px"}}>
         <Toolbar>
           <IconButton
             size="large"
@@ -86,6 +89,9 @@ export default function NavBar() {
                 onClick={handleMenu}
                 color="inherit"
               >
+                <Popover >
+                  <Typography sx={{ p: 2 }}>User Menu</Typography>
+                </Popover>
                 <AccountCircle />
               </IconButton>
               <Menu
@@ -97,8 +103,8 @@ export default function NavBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleClose}>Config 🛠</MenuItem>
+                <MenuItem onClick={handleClose}>My account 🙍‍♂️</MenuItem>
               </Menu>
             </div>
           )}
@@ -107,10 +113,19 @@ export default function NavBar() {
 
       <Snackbar
         open={openSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        slots={{ transition: Snackbar.Transition }}
+        sx={{
+          "& .MuiSnackbarContent-root": {
+            backgroundColor: "#1976d2",
+            color: "#fff",
+          },
+          borderRadius: "18px",
+        }}
         message="Are you sure you want to logout?"
         action={
           <>
-            <Button color="secondary" size="small" onClick={confirmLogout}>
+            <Button color="inherit" size="small" onClick={confirmLogout}>
               Yes
             </Button>
             <Button color="inherit" size="small" onClick={cancelLogout}>
