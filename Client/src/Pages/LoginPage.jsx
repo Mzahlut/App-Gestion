@@ -19,7 +19,7 @@ const Login = () => {
     try {
       const res = await axios.post(endpoint, { email, password });
       localStorage.setItem("token", res.data.token);
-      navigate("/homepage");
+      navigate("/clients");
     } catch (error) {
       console.error(`Error en ${action}:`, error.response?.data?.mensaje);
     }
