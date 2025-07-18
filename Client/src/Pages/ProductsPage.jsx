@@ -7,7 +7,7 @@ export const ProductsPage = () => {
     
   return (
     <>
-      <NavBar />
+      <NavBar headerName = "Products" type = "products"/>
       <ProductGrid />
     </>
   )
