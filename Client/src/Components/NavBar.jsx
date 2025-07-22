@@ -21,17 +21,23 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import axios from "axios";
 
-export default function NavBar({ headerName, type }) {
+export default function NavBar({
+  headerName,
+  type,
+  handleSubmitDialog,
+  formData = {},
+  setFormData = () => {},
+  openDialog,
+  setOpenDialog,
+}) {
   const [auth, setAuth] = useState(true);
   const [mainMenuAnchor, setMainMenuAnchor] = React.useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = React.useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [formData, setFormData] = useState({});
+
 
   const handleClickLogout = () => {
     setOpenSnackbar(true);
@@ -68,44 +74,6 @@ export default function NavBar({ headerName, type }) {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-  };
-
-  const handleSubmitDialog = async (type) => {
-    try {
-      if (type === "products") {
-        const response = await axios.post(
-          "http://localhost:4000/api/products",
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("Producto creado:", response.data);
-      } else if (type === "clients") {
-        const response = await axios.post(
-          "http://localhost:4000/api/clients",
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("Cliente creado:", response.data);
-      } else if (type === "suppliers") {
-        const response = await axios.post(
-          "http://localhost:4000/api/suppliers",
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("Proveedor creado:", response.data);
-      }
-
-      setOpenDialog(false);
-      setFormData({});
-    } catch (error) {
-      console.error("Error al enviar datos del producto:", error);
-    }
   };
 
   const handleOpenDialog = () => {
@@ -266,6 +234,7 @@ export default function NavBar({ headerName, type }) {
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
+
             <TextField
               name="stock"
               label="Stock"
@@ -276,6 +245,7 @@ export default function NavBar({ headerName, type }) {
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
+
             <TextField
               name="price"
               label="Price"
@@ -297,7 +267,9 @@ export default function NavBar({ headerName, type }) {
               }
             />
 
-            <Button onClick={() => handleSubmitDialog(type)}>Send</Button>
+            <Button onClick={() => handleSubmitDialog(formData, type)}>
+              Send
+            </Button>
             <Button onClick={handleCloseDialog}>Cancel</Button>
           </DialogContent>
         </Dialog>
@@ -345,7 +317,10 @@ export default function NavBar({ headerName, type }) {
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <Button onClick={() => handleSubmitDialog(type)}>Send</Button>
+            <Button onClick={() => handleSubmitDialog(formData, type)}>
+              Send
+            </Button>
+
             <Button onClick={handleCloseDialog}>Cancel</Button>
           </DialogContent>
         </Dialog>
@@ -383,7 +358,12 @@ export default function NavBar({ headerName, type }) {
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <Button onClick={() => handleSubmitDialog(type)}>Send</Button>
+            <Button onClick={() => handleSubmitDialog(formData, type)}
+              setOpenDialog={setOpenDialog}
+            >
+              Send
+            </Button>
+
             <Button onClick={handleCloseDialog}>Cancel</Button>
           </DialogContent>
         </Dialog>
