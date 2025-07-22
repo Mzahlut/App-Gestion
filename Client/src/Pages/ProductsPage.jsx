@@ -1,7 +1,7 @@
 import NavBar from "../Components/NavBar.jsx";
 import ProductGrid from "../Components/ProductGrid.jsx";
 import {FilterControl} from "../Utils/FilterControl.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 
@@ -11,13 +11,29 @@ export const ProductsPage = () => {
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [products, setProducts] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const fields = [
     { id:1, name: "name", label: "Name", type: "text" },
     { id:2, name: "stock", label: "Stock", type: "number" },
     { id:3, name: "price", label: "Price", type: "number" },
-    { id:4, name: "supplier", label: "Supplier", type: "text" },
+    { id:4, name: "supplier", label: "Supplier", type: "select" },
   ];
 
+
+  const getSuppliers = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/suppliers", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSuppliers(response.data);
+    } catch (error) {
+      console.error("Error al obtener proveedores:", error);
+    }
+  };
+
+  useEffect(() => {
+    getSuppliers();
+  }, []);
 
   const handleSubmitDialog = async (data) => {
     try {
@@ -25,7 +41,10 @@ export const ProductsPage = () => {
         name: data.name,
         stock: data.stock,
         price: data.price,
-        supplier: data.supplier,
+        supplier: getSuppliers().then((suppliers) => {
+          const supplier = suppliers.find((s) => s.name === data.supplier);
+          return supplier ? supplier._id : null;
+        }),
       };
 
       const response = await axios.post(
@@ -44,6 +63,8 @@ export const ProductsPage = () => {
     }
   };
 
+   
+
   return (
     <>
       <NavBar
@@ -55,8 +76,8 @@ export const ProductsPage = () => {
         formData={formData}
         setFormData={setFormData}
       />
-  
-      <FilterControl label="Products" fields={fields} />
+
+      <FilterControl label="Products" fields={fields} suppliers={suppliers} />
 
       <ProductGrid
         products={products}

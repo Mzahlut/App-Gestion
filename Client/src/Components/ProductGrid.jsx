@@ -31,7 +31,7 @@ export default function DataGridDemo({ products, setProducts }) {
     };
 
     fetchProducts();
-  }, []);
+  }, []); 
 
   useEffect(() => {
     const formatted = products.map((product) => ({

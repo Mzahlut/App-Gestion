@@ -42,7 +42,6 @@ export const ClientsPage = () => {
     }
   };
 
-  console.log("ClientsPage rendered with formData:", fields);
   return (
     <>
       <NavBar

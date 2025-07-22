@@ -42,7 +42,7 @@ export const SupplierPage = () => {
     }
   };
 
-  console.log(suppliers);
+
 
   return (
     <>

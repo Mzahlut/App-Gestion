@@ -11,11 +11,10 @@ export const FilterControl = ({ label, fields, suppliers }) => {
   const [supplierOptions, setSupplierOptions] = useState([]);
 
 
-  console.log("🧪 suppliers desde FilterControl:", suppliers);
 
   useEffect(() => {
   if (Array.isArray(suppliers)) {
-    const supplierOptions = suppliers.map(item => item._id);
+    const supplierOptions = suppliers.map(item => item.name);
     setSupplierOptions(supplierOptions);
   } else {
     console.warn("⚠️ suppliers no está disponible aún");
