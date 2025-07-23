@@ -3,23 +3,23 @@ import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 
-const columns = [
-  { field: "id", headerName: "ID", width: 90, hide: true },
-  { field: "name", headerName: "Product Name", width: 150, editable: true },
-  { field: "stock", headerName: "Stock", width: 150, editable: true },
-  {
-    field: "price",
-    headerName: "Price",
-    type: "number",
-    width: 110,
-    editable: true,
-  },
-  { field: "supplier", headerName: "Supplier", sortable: false, width: 160 },
-];
 
 export default function DataGridDemo({ products, setProducts }) {
   const [rows, setRows] = useState([]);
-
+  
+  const columns = [
+    { field: "id", headerName: "ID", width: 90, hide: true },
+    { field: "name", headerName: "Product Name", width: 150, editable: true },
+    { field: "stock", headerName: "Stock", width: 150, editable: true },
+    {
+      field: "price",
+      headerName: "Price",
+      type: "number",
+      width: 110,
+      editable: true,
+    },
+    { field: "supplier", headerName: "Supplier", sortable: false, width: 160 },
+  ];
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -56,6 +56,9 @@ export default function DataGridDemo({ products, setProducts }) {
               pageSize: 20,
             },
           },
+        }}
+        columnVisibilityModel={{
+          id: false,
         }}
         pageSizeOptions={[5, 10, 20]}
         checkboxSelection

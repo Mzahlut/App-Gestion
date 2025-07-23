@@ -6,7 +6,6 @@ import { connectDB } from './db.js';
 import authRoutes from './routes/auth.routes.js';
 
 
-
 import clientRoutes from './routes/client.routes.js';
 import supplierRoutes from './routes/supplier.routes.js';
 import productRoutes from './routes/product.routes.js';
@@ -23,6 +22,7 @@ app.use(morgan('dev'));
 
 await connectDB();
 
+//Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/suppliers', supplierRoutes);

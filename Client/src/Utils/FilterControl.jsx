@@ -8,6 +8,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
 
 export const FilterControl = ({ label, fields, suppliers }) => {
+  
+  
   const [supplierOptions, setSupplierOptions] = useState([]);
 
 

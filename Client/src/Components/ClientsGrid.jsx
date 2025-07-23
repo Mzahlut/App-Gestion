@@ -58,6 +58,9 @@ export default function DataGridDemo({ clients, setClients }) {
             },
           },
         }}
+        columnVisibilityModel={{
+          id: false,
+        }}
         pageSizeOptions={[5, 10, 20]}
         checkboxSelection
         disableRowSelectionOnClick
