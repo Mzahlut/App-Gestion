@@ -21,6 +21,9 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function NavBar({
   headerName,
@@ -37,11 +40,30 @@ export default function NavBar({
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const [suppliers, setSuppliers] = useState([]);
 
   const handleClickLogout = () => {
     setOpenSnackbar(true);
   };
+
+  useEffect(
+    () => async () => {
+      try {
+        const suppliers = await axios.get(
+          "http://localhost:4000/api/suppliers",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSuppliers(suppliers.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    },
+    []
+  );
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
@@ -256,15 +278,22 @@ export default function NavBar({
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <TextField
-              name="supplier"
-              label="Supplier"
-              fullWidth
-              margin="normal"
-              value={formData.supplier || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, [e.target.name]: e.target.value })
+            <Autocomplete
+              options={suppliers}
+              getOptionLabel={(option) => option.name}
+              onChange={
+                (event, value) =>
+                  setFormData({ ...formData, supplier: value?._id }) // 👈 guardás el ID
               }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Supplier"
+                  fullWidth
+                  margin="normal"
+                />
+              )}
+              value={suppliers.find((s) => s._id === formData.supplier) || null}
             />
 
             <Button onClick={() => handleSubmitDialog(formData, type)}>
@@ -358,7 +387,8 @@ export default function NavBar({
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <Button onClick={() => handleSubmitDialog(formData, type)}
+            <Button
+              onClick={() => handleSubmitDialog(formData, type)}
               setOpenDialog={setOpenDialog}
             >
               Send

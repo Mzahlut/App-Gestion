@@ -20,20 +20,39 @@ export const ProductsPage = () => {
   ];
 
 
-  const getSuppliers = async () => {
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/suppliers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSuppliers(response.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+
+  useEffect(() => {
+  const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/suppliers", {
+      const response = await axios.get("http://localhost:4000/api/products", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSuppliers(response.data);
+      setProducts(response.data);
     } catch (error) {
-      console.error("Error al obtener proveedores:", error);
+      console.error("Error fetching products:", error);
     }
   };
 
-  useEffect(() => {
-    getSuppliers();
+  fetchProducts();
   }, []);
+  
+  console.log(products)
+
 
   const handleSubmitDialog = async (data) => {
     try {
@@ -41,10 +60,7 @@ export const ProductsPage = () => {
         name: data.name,
         stock: data.stock,
         price: data.price,
-        supplier: getSuppliers().then((suppliers) => {
-          const supplier = suppliers.find((s) => s.name === data.supplier);
-          return supplier ? supplier._id : null;
-        }),
+        supplier: data.supplier
       };
 
       const response = await axios.post(
@@ -62,6 +78,8 @@ export const ProductsPage = () => {
       console.error("Error al enviar datos del producto:", error);
     }
   };
+
+
 
    
 

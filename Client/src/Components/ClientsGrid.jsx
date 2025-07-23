@@ -33,7 +33,6 @@ export default function DataGridDemo({ clients, setClients }) {
     fetchClients();
   }, []);
 
-
   useEffect(() => {
     const formatted = clients.map((client) => ({
       id: client._id,
@@ -49,7 +48,7 @@ export default function DataGridDemo({ clients, setClients }) {
     <Box sx={{ height: 400, width: "100%", marginTop: "20px" }}>
       <DataGrid
         rows={rows}
-        sx={{height: "100vh", width: "100%"}}
+        sx={{ height: "100vh", width: "100%" }}
         columns={columns}
         initialState={{
           pagination: {

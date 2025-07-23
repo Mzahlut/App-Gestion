@@ -39,10 +39,12 @@ export default function DataGridDemo({ products, setProducts }) {
       name: product.name,
       stock: product.stock,
       price: product.price,
-      supplier: product.supplier,
+      supplier: product.supplier?.name || "N/A",
     }));
     setRows(formatted);
   }, [products]);
+
+
 
   return (
     <Box sx={{ height: 400, width: "100%", marginTop: "20px" }}>
