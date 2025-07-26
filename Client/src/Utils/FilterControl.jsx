@@ -7,22 +7,18 @@ import Typography from "@mui/material/Typography";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
 
-export const FilterControl = ({ label, fields, suppliers }) => {
-  
-  
+export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
   const [supplierOptions, setSupplierOptions] = useState([]);
-
-
+  const [filters, setFilters] = useState({});
 
   useEffect(() => {
-  if (Array.isArray(suppliers)) {
-    const supplierOptions = suppliers.map(item => item.name);
-    setSupplierOptions(supplierOptions);
-  } else {
-    console.warn("⚠️ suppliers no está disponible aún");
-  }
-}, [suppliers]);
-
+    if (Array.isArray(suppliers)) {
+      const supplierOptions = suppliers.map((item) => item.name);
+      setSupplierOptions(supplierOptions);
+    } else {
+      console.warn("⚠️ suppliers no está disponible aún");
+    }
+  }, [suppliers]);
 
   return (
     <Box sx={{ width: "100%", marginTop: "20px", display: "flex" }}>
@@ -59,6 +55,12 @@ export const FilterControl = ({ label, fields, suppliers }) => {
                 <Autocomplete
                   options={supplierOptions}
                   sx={{ flex: 1 }}
+                  onChange={(event, value) => {
+                    setFilters((prev) => ({
+                      ...prev,
+                      supplier: value || "", // guardás el nombre del proveedor
+                    }));
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -69,6 +71,39 @@ export const FilterControl = ({ label, fields, suppliers }) => {
                     />
                   )}
                 />
+              ) : item.name === "price" ? (
+                <Box sx={{ display: "flex", flex: 1, gap: "6px" }}>
+                  <TextField
+                    label="From"
+                    size="small"
+                    type="number"
+                    value={filters.price?.from || ""}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        price: {
+                          ...prev.price,
+                          from: e.target.value,
+                        },
+                      }))
+                    }
+                  />
+                  <TextField
+                    label="To"
+                    size="small"
+                    type="number"
+                    value={filters.price?.to || ""}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        price: {
+                          ...prev.price,
+                          to: e.target.value,
+                        },
+                      }))
+                    }
+                  />
+                </Box>
               ) : (
                 <TextField
                   label={`Search ${item.label || item.name}`}
@@ -77,7 +112,8 @@ export const FilterControl = ({ label, fields, suppliers }) => {
                   fullWidth
                 />
               )}
-              <IconButton>
+
+              <IconButton onClick={() => onFilter(filters)}>
                 <SearchIcon />
               </IconButton>
             </Box>

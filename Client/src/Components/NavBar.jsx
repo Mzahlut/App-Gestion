@@ -25,6 +25,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect } from "react";
 import axios from "axios";
 
+
 export default function NavBar({
   headerName,
   type,
@@ -46,25 +47,21 @@ export default function NavBar({
     setOpenSnackbar(true);
   };
 
-  useEffect(
-    () => async () => {
-      try {
-        const suppliers = await axios.get(
-          "http://localhost:4000/api/suppliers",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setSuppliers(suppliers.data);
-      } catch (error) {
-        console.error("Error fetching suppliers:", error);
-      }
-    },
-    []
-  );
 
+  useEffect(() => async () => {
+    try {
+      const suppliers = await axios.get('http://localhost:4000/api/suppliers', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSuppliers(suppliers.data);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  }, []);
+
+  
   const confirmLogout = () => {
     localStorage.removeItem("token");
     console.log(token);
@@ -279,21 +276,23 @@ export default function NavBar({
               }
             />
             <Autocomplete
-              options={suppliers}
-              getOptionLabel={(option) => option.name}
-              onChange={
-                (event, value) =>
-                  setFormData({ ...formData, supplier: value?._id }) // 👈 guardás el ID
-              }
+              options={suppliers ? suppliers.map((supplier) => supplier.name) : []}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Supplier"
-                  fullWidth
                   margin="normal"
+                  fullWidth
                 />
               )}
-              value={suppliers.find((s) => s._id === formData.supplier) || null}
+              name="supplier"
+              label="Supplier"
+              fullWidth
+              margin="normal"
+              value={formData.supplier || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
             />
 
             <Button onClick={() => handleSubmitDialog(formData, type)}>
@@ -387,8 +386,7 @@ export default function NavBar({
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <Button
-              onClick={() => handleSubmitDialog(formData, type)}
+            <Button onClick={() => handleSubmitDialog(formData, type)}
               setOpenDialog={setOpenDialog}
             >
               Send

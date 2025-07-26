@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 
 
-export default function DataGridDemo({ products, setProducts }) {
+export default function DataGridDemo({ products, setProducts, items }) {
   const [rows, setRows] = useState([]);
   
   const columns = [
@@ -33,6 +33,7 @@ export default function DataGridDemo({ products, setProducts }) {
     fetchProducts();
   }, []); 
 
+
   useEffect(() => {
     const formatted = products.map((product) => ({
       id: product._id,
@@ -45,11 +46,23 @@ export default function DataGridDemo({ products, setProducts }) {
   }, [products]);
 
 
+  const formatProducts = (arr) =>
+  arr.map((product) => ({
+    id: product._id,
+    name: product.name,
+    stock: product.stock,
+    price: product.price,
+    supplier: product.supplier?.name || "N/A",
+  }));
+
+
 
   return (
     <Box sx={{ height: 400, width: "100%", marginTop: "20px" }}>
       <DataGrid
-        rows={rows}
+        rows={Array.isArray(items) && items.length > 0 ? formatProducts(items) : rows}
+
+
         sx={{ height: "100vh", width: "100%" }}
         columns={columns}
         initialState={{

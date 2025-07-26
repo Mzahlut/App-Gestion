@@ -11,6 +11,7 @@ export const ProductsPage = () => {
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [products, setProducts] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([])
   const [suppliers, setSuppliers] = useState([]);
   const fields = [
     { id:1, name: "name", label: "Name", type: "text" },
@@ -51,7 +52,6 @@ export const ProductsPage = () => {
   fetchProducts();
   }, []);
   
-  console.log(products)
 
 
   const handleSubmitDialog = async (data) => {
@@ -79,6 +79,53 @@ export const ProductsPage = () => {
     }
   };
 
+const handleFilter = (filters) => {
+  let result = [...products];
+
+  const from = parseFloat(filters?.price?.from);
+  const to = parseFloat(filters?.price?.to);
+
+  result = result.filter((product) => {
+    const price = parseFloat(product.price);
+
+    if (isNaN(price)) return false;
+
+    const desdeOK = isNaN(from) ? true : price >= from;
+    const hastaOK = isNaN(to) ? true : price <= to;
+
+    return desdeOK && hastaOK;
+  });
+
+  if (filters?.name) {
+    const nameLower = filters.name.toLowerCase();
+    result = result.filter((product) =>
+      product.name.toLowerCase().includes(nameLower)
+    );
+  }
+
+
+  if (filters?.stock) {
+    const stock = parseInt(filters.stock);
+    if (!isNaN(stock)) {
+      result = result.filter((product) => product.stock >= stock);
+    }
+  }
+
+  if (filters?.supplier) {
+    result = result.filter(
+      (product) => product.supplier?.name === filters.supplier
+    );
+  }
+
+  setFilteredItems(result)
+
+  console.log("🔍 Filtrado por precio:", { from, to }, result);
+  setFilteredItems(result);
+};
+
+
+
+
 
 
    
@@ -95,13 +142,14 @@ export const ProductsPage = () => {
         setFormData={setFormData}
       />
 
-      <FilterControl label="Products" fields={fields} suppliers={suppliers} />
+      <FilterControl label="Products" fields={fields} suppliers={suppliers} products = {products} onFilter = {handleFilter} />
 
       <ProductGrid
         products={products}
         setProducts={setProducts}
         formData={formData}
         setFormData={setFormData}
+        items = {filteredItems}
       />
     </>
   );
