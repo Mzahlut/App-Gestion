@@ -61,8 +61,6 @@ export default function DataGridDemo({ products, setProducts, items }) {
     <Box sx={{ height: 400, width: "100%", marginTop: "20px" }}>
       <DataGrid
         rows={Array.isArray(items) && items.length > 0 ? formatProducts(items) : rows}
-
-
         sx={{ height: "100vh", width: "100%" }}
         columns={columns}
         initialState={{

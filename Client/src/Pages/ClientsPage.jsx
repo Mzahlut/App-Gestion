@@ -10,6 +10,7 @@ export const ClientsPage = () => {
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [clients, setClients] = useState([]);
+    const [filteredItems, setFilteredItems] = useState("")
   const fields = [
     { id:1, name: "name", label: "Name", type: "text" },
     { id:2, name: "email", label: "Email", type: "email" },
@@ -42,6 +43,26 @@ export const ClientsPage = () => {
     }
   };
 
+  
+  const handleFilter = (filters) => {
+  let result = [...clients];
+
+  fields.forEach(field => {
+    const value = filters[field.name];
+    if (field.type === "text" && value?.trim()) {
+      const search = value.toLowerCase();
+      result = result.filter(client =>
+        client[field.name]?.toLowerCase().includes(search)
+      );
+    }
+  });
+
+    setFilteredItems(result);
+    
+    console.log(filteredItems)
+};
+
+
   return (
     <>
       <NavBar
@@ -53,9 +74,10 @@ export const ClientsPage = () => {
         formData={formData}
         setFormData={setFormData}
       />
-      <FilterControl label="Clients" fields={fields} />
+      <FilterControl label="Clients" fields={fields} onFilter={handleFilter} />
 
       <ClientsGrid
+        items = {filteredItems}
         clients={clients}
         setClients={setClients}
         formData={formData}

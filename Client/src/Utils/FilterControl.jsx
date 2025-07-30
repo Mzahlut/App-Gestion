@@ -6,6 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
+import InputAdornment from "@mui/material/InputAdornment";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
   const [supplierOptions, setSupplierOptions] = useState([]);
@@ -51,14 +53,14 @@ export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
               key={item.id}
               sx={{ display: "flex", flex: 1, gap: "6px", minWidth: "200px" }}
             >
-              {item.name === "supplier" ? (
+              {item.type === "select" ? (
                 <Autocomplete
                   options={supplierOptions}
                   sx={{ flex: 1 }}
                   onChange={(event, value) => {
                     setFilters((prev) => ({
                       ...prev,
-                      supplier: value || "", // guardás el nombre del proveedor
+                      supplier: value || "",
                     }));
                   }}
                   renderInput={(params) => (
@@ -71,20 +73,17 @@ export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
                     />
                   )}
                 />
-              ) : item.name === "price" ? (
+              ) : item.type === "number" ? (
                 <Box sx={{ display: "flex", flex: 1, gap: "6px" }}>
                   <TextField
                     label="From"
                     size="small"
                     type="number"
-                    value={filters.price?.from || ""}
+                    value={filters[`${item.name}_from`] || ""}
                     onChange={(e) =>
                       setFilters((prev) => ({
                         ...prev,
-                        price: {
-                          ...prev.price,
-                          from: e.target.value,
-                        },
+                        [`${item.name}_from`]: e.target.value,
                       }))
                     }
                   />
@@ -92,14 +91,11 @@ export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
                     label="To"
                     size="small"
                     type="number"
-                    value={filters.price?.to || ""}
+                    value={filters[`${item.name}_to`] || ""}
                     onChange={(e) =>
                       setFilters((prev) => ({
                         ...prev,
-                        price: {
-                          ...prev.price,
-                          to: e.target.value,
-                        },
+                        [`${item.name}_to`]: e.target.value,
                       }))
                     }
                   />
@@ -110,6 +106,30 @@ export const FilterControl = ({ label, fields, suppliers, onFilter }) => {
                   variant="outlined"
                   size="small"
                   fullWidth
+                  value={filters[item.name] || ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      [item.name]: e.target.value,
+                    }))
+                  }
+                  InputProps={{
+                    endAdornment: filters[item.name] && (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            setFilters((prev) => ({
+                              ...prev,
+                              [item.name]: "",
+                            }))
+                          }
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               )}
 

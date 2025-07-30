@@ -17,8 +17,10 @@ const columns = [
   { field: "address", headerName: "Address", sortable: false, width: 160 },
 ];
 
-export default function DataGridDemo({ clients, setClients }) {
+export default function DataGridDemo({ clients, setClients, items }) {
   const [rows, setRows] = useState([]);
+
+  console.log("items desde el grid", items)
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -44,10 +46,20 @@ export default function DataGridDemo({ clients, setClients }) {
     setRows(formatted);
   }, [clients]);
 
+
+  const formatClients = (arr) =>
+  arr.map((client) => ({
+    id: client._id,
+    name: client.name,
+    email: client.email,
+    phone: client.phone,
+    address: client.address
+  }));
+
   return (
     <Box sx={{ height: 400, width: "100%", marginTop: "20px" }}>
       <DataGrid
-        rows={rows}
+        rows={Array.isArray(items) && items.length > 0 ? formatClients(items) : rows}
         sx={{ height: "100vh", width: "100%" }}
         columns={columns}
         initialState={{
