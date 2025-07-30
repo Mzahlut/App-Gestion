@@ -24,7 +24,12 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect } from "react";
 import axios from "axios";
-
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 
 export default function NavBar({
   headerName,
@@ -36,9 +41,9 @@ export default function NavBar({
   setOpenDialog,
 }) {
   const [auth, setAuth] = useState(true);
-  const [mainMenuAnchor, setMainMenuAnchor] = React.useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = React.useState(null);
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const token = localStorage.getItem("token");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
@@ -47,21 +52,25 @@ export default function NavBar({
     setOpenSnackbar(true);
   };
 
+  useEffect(
+    () => async () => {
+      try {
+        const suppliers = await axios.get(
+          "http://localhost:4000/api/suppliers",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSuppliers(suppliers.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    },
+    []
+  );
 
-  useEffect(() => async () => {
-    try {
-      const suppliers = await axios.get('http://localhost:4000/api/suppliers', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setSuppliers(suppliers.data);
-    } catch (error) {
-      console.error("Error fetching suppliers:", error);
-    }
-  }, []);
-
-  
   const confirmLogout = () => {
     localStorage.removeItem("token");
     console.log(token);
@@ -71,12 +80,38 @@ export default function NavBar({
     setOpenSnackbar(false);
   };
 
-  const cancelLogout = () => {
-    setOpenSnackbar(false);
+  const DrawerList = ({ onNavigate }) => (
+    <Box sx={{ width: 250 }} role="presentation">
+      <Typography
+       variant="h4" sx={{padding: '5px'}}>
+        Businness Managment
+      </Typography>
+      <List>
+        {["Suppliers", "Products", "Clients"].map((text) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton onClick={() => onNavigate(text)}>
+              <ListItemIcon>
+                
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+  const handleToggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
   };
 
-  const handleMainMenu = (event) => {
-    setMainMenuAnchor(event.currentTarget);
+  const handleNavigateFromDrawer = (target) => {
+    navigate(`/${target.toLowerCase()}`);
+    setDrawerOpen(false);
+  };
+
+  const cancelLogout = () => {
+    setOpenSnackbar(false);
   };
 
   const handleUserMenu = (event) => {
@@ -85,10 +120,6 @@ export default function NavBar({
 
   const handleCloseUserMenu = () => {
     setUserMenuAnchor(null);
-  };
-
-  const handleCloseMainMenu = () => {
-    setMainMenuAnchor(null);
   };
 
   const handleCloseDialog = () => {
@@ -115,50 +146,14 @@ export default function NavBar({
       </FormGroup>
       <AppBar position="static" sx={{ borderRadius: "12px" }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={handleMainMenu}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Button onClick={handleToggleDrawer} color="inherit">
+            <MenuIcon/>
+          </Button>
 
-          <Menu
-            id="main-menu"
-            anchorEl={mainMenuAnchor}
-            open={Boolean(mainMenuAnchor)}
-            onClose={handleCloseMainMenu}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
-          >
-            <MenuItem
-              onClick={() => {
-                handleCloseMainMenu();
-                navigate("/products");
-              }}
-            >
-              Products
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleCloseMainMenu();
-                navigate("/clients");
-              }}
-            >
-              Clients
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleCloseMainMenu();
-                navigate("/supplier");
-              }}
-            >
-              Suppliers
-            </MenuItem>
-          </Menu>
+          <Drawer anchor="left" open={drawerOpen} onClose={handleToggleDrawer}>
+            <DrawerList onNavigate={handleNavigateFromDrawer} />
+          </Drawer>
+
           <IconButton
             size="large"
             edge="start"
@@ -276,7 +271,9 @@ export default function NavBar({
               }
             />
             <Autocomplete
-              options={suppliers ? suppliers.map((supplier) => supplier.name) : []}
+              options={
+                suppliers ? suppliers.map((supplier) => supplier.name) : []
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -386,7 +383,8 @@ export default function NavBar({
                 setFormData({ ...formData, [e.target.name]: e.target.value })
               }
             />
-            <Button onClick={() => handleSubmitDialog(formData, type)}
+            <Button
+              onClick={() => handleSubmitDialog(formData, type)}
               setOpenDialog={setOpenDialog}
             >
               Send
