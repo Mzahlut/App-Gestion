@@ -4,6 +4,7 @@ import RegisterPage from './Pages/RegisterPage.jsx';
 import { ClientsPage } from './Pages/ClientsPage.jsx';
 import { SupplierPage } from './Pages/SupplierPage.jsx';
 import { ProductsPage } from './Pages/ProductsPage.jsx';
+import {InvoicePage} from './Pages/InvoicePage.jsx'
 
 
 import './App.css'
@@ -18,6 +19,7 @@ function App() {
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/suppliers" element={<SupplierPage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/invoices" element={<InvoicePage />} />
       </Routes>
 
     </Router>

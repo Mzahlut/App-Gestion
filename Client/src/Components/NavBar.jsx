@@ -82,17 +82,14 @@ export default function NavBar({
 
   const DrawerList = ({ onNavigate }) => (
     <Box sx={{ width: 250 }} role="presentation">
-      <Typography
-       variant="h4" sx={{padding: '5px'}}>
+      <Typography variant="h4" sx={{ padding: "5px" }}>
         Businness Managment
       </Typography>
       <List>
-        {["Suppliers", "Products", "Clients"].map((text) => (
+        {["Suppliers", "Products", "Clients", "Invoices"].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => onNavigate(text)}>
-              <ListItemIcon>
-                
-              </ListItemIcon>
+              <ListItemIcon></ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
@@ -118,6 +115,13 @@ export default function NavBar({
     setUserMenuAnchor(event.currentTarget);
   };
 
+  const handleAddProduct = (product) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      products: [...(prevData.products || []), product],
+    }));
+  };
+
   const handleCloseUserMenu = () => {
     setUserMenuAnchor(null);
   };
@@ -129,6 +133,8 @@ export default function NavBar({
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
+
+  console.log(formData);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -147,7 +153,7 @@ export default function NavBar({
       <AppBar position="static" sx={{ borderRadius: "12px" }}>
         <Toolbar>
           <Button onClick={handleToggleDrawer} color="inherit">
-            <MenuIcon/>
+            <MenuIcon />
           </Button>
 
           <Drawer anchor="left" open={drawerOpen} onClose={handleToggleDrawer}>
@@ -343,6 +349,72 @@ export default function NavBar({
               }
             />
             <Button onClick={() => handleSubmitDialog(formData, type)}>
+              Send
+            </Button>
+
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+          </DialogContent>
+        </Dialog>
+      ) : type == "invoices" ? (
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>Invoices</DialogTitle>
+          <DialogContent>
+            <TextField
+              name="number"
+              label="Number"
+              fullWidth
+              margin="normal"
+              value={formData.number || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
+            />
+            <TextField
+              name="email"
+              label="Email"
+              fullWidth
+              margin="normal"
+              value={formData.email || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
+            />
+            <TextField
+              name="phone"
+              label="Phone"
+              fullWidth
+              margin="normal"
+              value={formData.phone || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
+            />
+            <TextField
+              name="address"
+              label="Address"
+              fullWidth
+              margin="normal"
+              value={formData.address || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
+            />
+            <TextField
+              name="products"
+              label="Products"
+              fullWidth
+              margin="normal"
+              value={formData.products || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, [e.target.name]: e.target.value })
+              }
+            />
+            <Button onClick={() => handleAddProduct(formData.products)}>Add</Button>
+
+            <Button
+              onClick={() => handleSubmitDialog(formData, type)}
+              setOpenDialog={setOpenDialog}
+            >
               Send
             </Button>
 
