@@ -2,7 +2,7 @@ import Invoice from "../models/invoice.model.js";
 
 export const getInvoices = async (req, res) => {
   try {
-    const invoices = await Invoice.find().populate("products.productId");
+    const invoices = await Invoice.find()
     res.json(invoices);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener las facturas" });
@@ -48,7 +48,7 @@ export const createInvoice = async (req, res) => {
     });
 
     const savedInvoice = await newInvoice.save();
-    const populatedInvoice = await savedInvoice.populate("products.productId");
+    res.status(201).json(savedInvoice);
 
     res.status(201).json(populatedInvoice);
   } catch (error) {

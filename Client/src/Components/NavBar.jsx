@@ -47,6 +47,11 @@ export default function NavBar({
   const token = localStorage.getItem("token");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
+  const [currentProduct, setCurrentProduct] = useState({
+    name: "",
+    quantity: "",
+    unitPrice: "",
+  });
 
   const handleClickLogout = () => {
     setOpenSnackbar(true);
@@ -115,11 +120,25 @@ export default function NavBar({
     setUserMenuAnchor(event.currentTarget);
   };
 
-  const handleAddProduct = (product) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      products: [...(prevData.products || []), product],
-    }));
+  const handleAddProduct = () => {
+    if (
+      currentProduct.name &&
+      currentProduct.quantity &&
+      currentProduct.unitPrice
+    ) {
+      const newProduct = {
+        name: currentProduct.name,
+        quantity: parseInt(currentProduct.quantity),
+        unitPrice: parseFloat(currentProduct.unitPrice),
+      };
+
+      setFormData((prev) => ({
+        ...prev,
+        products: [...(prev.products || []), newProduct],
+      }));
+
+      setCurrentProduct({ name: "", quantity: "", unitPrice: "" });
+    }
   };
 
   const handleCloseUserMenu = () => {
@@ -400,16 +419,51 @@ export default function NavBar({
               }
             />
             <TextField
-              name="products"
-              label="Products"
-              fullWidth
-              margin="normal"
-              value={formData.products || ""}
+              label="Nombre del producto"
+              value={currentProduct.name}
               onChange={(e) =>
-                setFormData({ ...formData, [e.target.name]: e.target.value })
+                setCurrentProduct({ ...currentProduct, name: e.target.value })
               }
             />
-            <Button onClick={() => handleAddProduct(formData.products)}>Add</Button>
+
+            <TextField
+              label="Cantidad"
+              type="number"
+              value={currentProduct.quantity}
+              onChange={(e) =>
+                setCurrentProduct({
+                  ...currentProduct,
+                  quantity: e.target.value,
+                })
+              }
+            />
+
+            <TextField
+              label="Precio unitario"
+              type="number"
+              value={currentProduct.unitPrice}
+              onChange={(e) =>
+                setCurrentProduct({
+                  ...currentProduct,
+                  unitPrice: e.target.value,
+                })
+              }
+            />
+
+            <Button onClick={handleAddProduct}>Add</Button>
+            {Array.isArray(formData.products) &&
+              formData.products.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle1">
+                    Productos agregados:
+                  </Typography>
+                  {formData.products.map((p, i) => (
+                    <Typography key={i}>
+                      • {p.name} — {p.quantity} x ${p.unitPrice}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
 
             <Button
               onClick={() => handleSubmitDialog(formData, type)}
